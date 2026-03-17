@@ -45,6 +45,8 @@ services:
       context: .
       dockerfile: api/Dockerfile
     container_name: my_ai_api
+    ports:
+      - "127.0.0.1:8000:8000"
     env_file:
       - .env.prod
     depends_on:
@@ -60,41 +62,11 @@ services:
     networks:
       - ai_net
 
-  nginx:
-    image: nginx:alpine
-    container_name: my_ai_nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - certbot_www:/var/www/certbot:ro
-      - certbot_conf:/etc/letsencrypt:ro
-    depends_on:
-      - api
-    restart: unless-stopped
-    networks:
-      - ai_net
-
-  certbot:
-    image: certbot/certbot:latest
-    container_name: my_ai_certbot
-    volumes:
-      - certbot_www:/var/www/certbot
-      - certbot_conf:/etc/letsencrypt
-    # İlk SSL almak için: docker compose -f docker-compose.prod.yml run --rm certbot certonly ...
-    # Sonrasında otomatik yenileme için:
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --quiet; sleep 12h & wait $${!}; done;'"
-    networks:
-      - ai_net
-
 volumes:
   ollama_data:
   qdrant_data:
   redis_data:
   postgres_data:
-  certbot_www:
-  certbot_conf:
 
 networks:
   ai_net:
