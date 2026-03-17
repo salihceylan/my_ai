@@ -41,7 +41,9 @@ services:
       - ai_net
 
   api:
-    build: ./api
+    build:
+      context: .
+      dockerfile: api/Dockerfile
     container_name: my_ai_api
     env_file:
       - .env.prod
@@ -51,9 +53,9 @@ services:
       - redis
       - postgres
     volumes:
-      - ./api:/app
-      - ./pipeline:/pipeline
-      - ./agent:/agent
+      - ./api:/app/api
+      - ./pipeline:/app/pipeline
+      - ./agent:/app/agent
     restart: unless-stopped
     networks:
       - ai_net
