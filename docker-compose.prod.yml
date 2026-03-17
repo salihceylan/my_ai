@@ -5,51 +5,46 @@ services:
   ollama:
     image: ollama/ollama:latest
     container_name: my_ai_ollama
-    ports:
-      - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
-    restart: always
+    restart: unless-stopped
+    networks:
+      - ai_net
 
   qdrant:
     image: qdrant/qdrant:latest
     container_name: my_ai_qdrant
-    expose:
-      - "6333"
     volumes:
       - qdrant_data:/qdrant/storage
-    restart: always
+    restart: unless-stopped
+    networks:
+      - ai_net
 
   redis:
     image: redis:7-alpine
     container_name: my_ai_redis
-    expose:
-      - "6379"
     volumes:
       - redis_data:/data
-    restart: always
+    restart: unless-stopped
+    networks:
+      - ai_net
 
   postgres:
     image: postgres:16-alpine
     container_name: my_ai_postgres
-    expose:
-      - "5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: always
+    restart: unless-stopped
+    networks:
+      - ai_net
 
   api:
-    build:
-      context: .
-      dockerfile: api/Dockerfile.prod
-
+    build: ./api
     container_name: my_ai_api
-    expose:
-      - "8000"
     env_file:
       - .env.prod
     depends_on:
@@ -57,7 +52,13 @@ services:
       - qdrant
       - redis
       - postgres
-    restart: always
+    volumes:
+      - ./api:/app
+      - ./pipeline:/pipeline
+      - ./agent:/agent
+    restart: unless-stopped
+    networks:
+      - ai_net
 
   nginx:
     image: nginx:alpine
@@ -67,21 +68,23 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
       - certbot_www:/var/www/certbot:ro
       - certbot_conf:/etc/letsencrypt:ro
     depends_on:
       - api
-    restart: always
+    restart: unless-stopped
+    networks:
+      - ai_net
 
   certbot:
-    image: certbot/certbot
+    image: certbot/certbot:latest
     container_name: my_ai_certbot
     volumes:
       - certbot_www:/var/www/certbot
       - certbot_conf:/etc/letsencrypt
-    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done"
-    restart: always
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - ai_net
 
 volumes:
   ollama_data:
@@ -90,3 +93,7 @@ volumes:
   postgres_data:
   certbot_www:
   certbot_conf:
+
+networks:
+  ai_net:
+    driver: bridge
