@@ -29,7 +29,7 @@ def search_knowledge_base(query: str) -> str:
             collection_name=collection,
             query_vector=query_vector,
             limit=5,
-            score_threshold=0.5,
+            score_threshold=0.2,
         )
 
         if not results:
