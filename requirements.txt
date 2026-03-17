@@ -28,7 +28,7 @@ openpyxl==3.1.5
 beautifulsoup4==4.12.3
 
 # Web search
-tavily-python==0.5.0
+duckduckgo-search==6.3.7
 
 # Utilities
 python-dotenv==1.0.1
