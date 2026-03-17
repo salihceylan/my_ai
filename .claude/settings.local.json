@@ -2,6 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(docker compose:*)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\fingonancalime\\Desktop\\my_ai\\nginx"
     ]
   }
 }

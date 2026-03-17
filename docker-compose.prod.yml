@@ -82,7 +82,9 @@ services:
     volumes:
       - certbot_www:/var/www/certbot
       - certbot_conf:/etc/letsencrypt
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    # İlk SSL almak için: docker compose -f docker-compose.prod.yml run --rm certbot certonly ...
+    # Sonrasında otomatik yenileme için:
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --quiet; sleep 12h & wait $${!}; done;'"
     networks:
       - ai_net
 
