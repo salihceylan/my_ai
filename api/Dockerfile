@@ -6,6 +6,10 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     curl \
+    libmagic1 \
+    libmagic-dev \
+    poppler-utils \
+    tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
