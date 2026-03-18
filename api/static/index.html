@@ -9,8 +9,8 @@
 
     body {
       font-family: 'Söhne', ui-sans-serif, system-ui, -apple-system, sans-serif;
-      background: #212121;
-      color: #ececec;
+      background: #ffffff;
+      color: #1a1a1a;
       height: 100vh;
       display: flex;
       overflow: hidden;
@@ -20,7 +20,8 @@
     .sidebar {
       width: 260px;
       min-width: 260px;
-      background: #171717;
+      background: #f7f7f8;
+      border-right: 1px solid #e5e5e5;
       display: flex;
       flex-direction: column;
       padding: 8px;
@@ -37,7 +38,7 @@
     .sidebar-logo {
       font-size: 17px;
       font-weight: 600;
-      color: #fff;
+      color: #1a1a1a;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -46,14 +47,14 @@
     .new-chat-btn {
       background: none;
       border: none;
-      color: #ececec;
+      color: #555;
       cursor: pointer;
       padding: 6px;
       border-radius: 8px;
       font-size: 18px;
       transition: background 0.15s;
     }
-    .new-chat-btn:hover { background: #2f2f2f; }
+    .new-chat-btn:hover { background: #ececec; }
 
     .sidebar-section {
       padding: 8px 8px 4px;
@@ -69,14 +70,14 @@
 
     /* Döküman yükleme */
     .upload-zone {
-      border: 1.5px dashed #3e3e3e;
+      border: 1.5px dashed #d1d5db;
       border-radius: 10px;
       padding: 14px 10px;
       text-align: center;
       cursor: pointer;
       transition: border-color 0.2s, background 0.2s;
     }
-    .upload-zone:hover { border-color: #10a37f; background: #1a2420; }
+    .upload-zone:hover { border-color: #10a37f; background: #f0faf7; }
     .upload-zone input { display: none; }
     .upload-zone .upload-icon { font-size: 22px; margin-bottom: 4px; }
     .upload-zone p { font-size: 12px; color: #8e8ea0; }
@@ -85,10 +86,10 @@
       width: 100%;
       margin-top: 8px;
       padding: 7px 10px;
-      background: #2f2f2f;
-      border: 1px solid #3e3e3e;
+      background: #fff;
+      border: 1px solid #d1d5db;
       border-radius: 8px;
-      color: #ececec;
+      color: #1a1a1a;
       font-size: 13px;
       outline: none;
       cursor: pointer;
@@ -109,7 +110,7 @@
       transition: background 0.2s;
     }
     .upload-btn:hover { background: #0d8c6c; }
-    .upload-btn:disabled { background: #2f2f2f; color: #555; cursor: not-allowed; }
+    .upload-btn:disabled { background: #e5e5e5; color: #aaa; cursor: not-allowed; }
 
     .status-pill {
       font-size: 11px;
@@ -118,9 +119,9 @@
       margin-top: 6px;
       text-align: center;
     }
-    .status-ok { background: #0d2e22; color: #34d399; }
-    .status-err { background: #2e0d0d; color: #f87171; }
-    .status-info { background: #0d1e2e; color: #60a5fa; }
+    .status-ok { background: #d1fae5; color: #065f46; }
+    .status-err { background: #fee2e2; color: #991b1b; }
+    .status-info { background: #dbeafe; color: #1e40af; }
 
     /* Döküman listesi */
     .doc-list {
@@ -132,7 +133,7 @@
     }
     .doc-list::-webkit-scrollbar { width: 4px; }
     .doc-list::-webkit-scrollbar-track { background: transparent; }
-    .doc-list::-webkit-scrollbar-thumb { background: #3e3e3e; border-radius: 2px; }
+    .doc-list::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
 
     .doc-item {
       display: flex;
@@ -141,21 +142,21 @@
       padding: 6px 10px;
       border-radius: 6px;
       font-size: 12px;
-      color: #ececec;
+      color: #1a1a1a;
       transition: background 0.15s;
     }
-    .doc-item:hover { background: #2f2f2f; }
+    .doc-item:hover { background: #ececec; }
     .doc-item-name {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       max-width: 170px;
-      color: #c5c5d2;
+      color: #444;
     }
     .doc-del-btn {
       background: none;
       border: none;
-      color: #555;
+      color: #aaa;
       cursor: pointer;
       font-size: 13px;
       padding: 2px 4px;
@@ -163,21 +164,21 @@
       transition: color 0.15s;
       flex-shrink: 0;
     }
-    .doc-del-btn:hover { color: #f87171; }
+    .doc-del-btn:hover { color: #dc2626; }
 
     .refresh-btn {
       width: 100%;
       margin-top: 6px;
       padding: 6px;
       background: none;
-      border: 1px solid #3e3e3e;
+      border: 1px solid #d1d5db;
       border-radius: 8px;
       color: #8e8ea0;
       font-size: 12px;
       cursor: pointer;
       transition: background 0.15s, color 0.15s;
     }
-    .refresh-btn:hover { background: #2f2f2f; color: #ececec; }
+    .refresh-btn:hover { background: #ececec; color: #1a1a1a; }
 
     /* ── ANA ALAN ─────────────────────────────── */
     .main {
@@ -185,6 +186,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      background: #ffffff;
     }
 
     /* Mesajlar */
@@ -196,7 +198,7 @@
     }
     .messages::-webkit-scrollbar { width: 6px; }
     .messages::-webkit-scrollbar-track { background: transparent; }
-    .messages::-webkit-scrollbar-thumb { background: #3e3e3e; border-radius: 3px; }
+    .messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
 
     /* Boş ekran */
     .empty-state {
@@ -211,7 +213,7 @@
     .empty-state h2 {
       font-size: 28px;
       font-weight: 600;
-      color: #ececec;
+      color: #1a1a1a;
     }
     .empty-state p { font-size: 15px; color: #8e8ea0; }
 
@@ -224,16 +226,16 @@
     }
     .suggestion-card {
       padding: 12px 16px;
-      background: #2f2f2f;
-      border: 1px solid #3e3e3e;
+      background: #f7f7f8;
+      border: 1px solid #e5e5e5;
       border-radius: 12px;
       font-size: 13px;
-      color: #c5c5d2;
+      color: #444;
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s;
       text-align: left;
     }
-    .suggestion-card:hover { background: #3e3e3e; border-color: #555; }
+    .suggestion-card:hover { background: #ececec; border-color: #ccc; }
 
     /* Mesaj satırları */
     .msg-row {
@@ -242,7 +244,7 @@
       justify-content: center;
     }
     .msg-row.user { background: transparent; }
-    .msg-row.ai { background: transparent; }
+    .msg-row.ai { background: #f7f7f8; }
 
     .msg-content {
       max-width: 680px;
@@ -264,19 +266,19 @@
       flex-shrink: 0;
       margin-top: 2px;
     }
-    .msg-row.user .msg-avatar { background: #19c37d; }
-    .msg-row.ai .msg-avatar { background: #10a37f; }
+    .msg-row.user .msg-avatar { background: #10a37f; color: #fff; }
+    .msg-row.ai .msg-avatar { background: #1a1a1a; color: #fff; }
 
     .msg-text {
       flex: 1;
       font-size: 15px;
       line-height: 1.7;
-      color: #ececec;
+      color: #1a1a1a;
       white-space: pre-wrap;
       word-break: break-word;
     }
     .msg-row.user .msg-text {
-      background: #2f2f2f;
+      background: #f0f0f0;
       padding: 12px 16px;
       border-radius: 16px;
     }
@@ -290,9 +292,9 @@
     .source-badge {
       font-size: 11px;
       padding: 3px 10px;
-      background: #1a2e24;
-      color: #34d399;
-      border: 1px solid #14532d;
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
       border-radius: 20px;
     }
 
@@ -305,7 +307,7 @@
     }
     .typing-dots span {
       width: 7px; height: 7px;
-      background: #8e8ea0;
+      background: #aaa;
       border-radius: 50%;
       animation: typingBounce 1.4s infinite ease-in-out;
     }
@@ -321,28 +323,31 @@
       padding: 16px 24px 24px;
       display: flex;
       justify-content: center;
+      background: #ffffff;
+      border-top: 1px solid #e5e5e5;
     }
 
     .input-box {
       max-width: 680px;
       width: 100%;
-      background: #2f2f2f;
-      border: 1px solid #3e3e3e;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
       border-radius: 16px;
       display: flex;
       align-items: flex-end;
       padding: 10px 14px;
       gap: 10px;
       transition: border-color 0.2s;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
     }
-    .input-box:focus-within { border-color: #555; }
+    .input-box:focus-within { border-color: #10a37f; box-shadow: 0 1px 8px rgba(16,163,127,0.15); }
 
     #msgInput {
       flex: 1;
       background: none;
       border: none;
       outline: none;
-      color: #ececec;
+      color: #1a1a1a;
       font-size: 15px;
       font-family: inherit;
       resize: none;
@@ -351,7 +356,7 @@
       line-height: 1.6;
       padding: 2px 0;
     }
-    #msgInput::placeholder { color: #555; }
+    #msgInput::placeholder { color: #aaa; }
 
     .send-btn {
       width: 34px;
@@ -369,12 +374,12 @@
       transition: background 0.2s, opacity 0.2s;
     }
     .send-btn:hover { background: #0d8c6c; }
-    .send-btn:disabled { background: #3e3e3e; opacity: 0.5; cursor: not-allowed; }
+    .send-btn:disabled { background: #e5e5e5; opacity: 0.7; cursor: not-allowed; }
 
     .input-footer {
       text-align: center;
       font-size: 11px;
-      color: #555;
+      color: #aaa;
       margin-top: 8px;
     }
   </style>
