@@ -5,10 +5,27 @@ from agent.tools.web_search import web_search
 from agent.memory.short_term import get_history, save_history
 import os
 
-SYSTEM_PROMPT = """Sen şirket içi bir yapay zeka asistanısın.
+BASE_PROMPT = """Sen şirket içi bir yapay zeka asistanısın.
 Aşağıda bilgi tabanı ve/veya web aramasından bulunan bilgiler verilmiştir.
 Bu bilgileri kullanarak soruyu Türkçe olarak yanıtla.
 Eğer bilgi yoksa bunu belirt. Kaynak göster."""
+
+
+def build_system_prompt(user_profile: dict) -> str:
+    prompt = BASE_PROMPT
+    if user_profile:
+        notes = []
+        topics = user_profile.get("top_topics", [])
+        style = user_profile.get("style", "")
+        if topics:
+            notes.append(f"Bu kullanıcı genellikle şu konularla ilgileniyor: {', '.join(topics[:5])}.")
+        if style == "detaylı":
+            notes.append("Kullanıcı detaylı açıklamalar tercih ediyor.")
+        elif style == "kısa":
+            notes.append("Kullanıcı kısa ve öz cevaplar tercih ediyor.")
+        if notes:
+            prompt += "\n\nKullanıcı Profili:\n" + " ".join(notes)
+    return prompt
 
 
 def get_llm():
@@ -19,7 +36,7 @@ def get_llm():
     )
 
 
-async def run_agent(message: str, session_id: str = "default", stream: bool = False):
+async def run_agent(message: str, session_id: str = "default", user_profile: dict = {}, stream: bool = False):
     # 1. Bilgi tabanında her zaman ara
     kb_result = search_knowledge_base.invoke({"query": message})
 
@@ -32,7 +49,7 @@ async def run_agent(message: str, session_id: str = "default", stream: bool = Fa
     history = await get_history(session_id)
 
     # 4. Sistem mesajını ve sonuçları birleştir
-    context_parts = [SYSTEM_PROMPT]
+    context_parts = [build_system_prompt(user_profile)]
     if kb_result and "bulunamadı" not in kb_result.lower():
         context_parts.append(f"\n--- Bilgi Tabanı ---\n{kb_result}\n---")
     if web_result and "bulunamadı" not in web_result.lower():

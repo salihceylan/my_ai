@@ -1,14 +1,5 @@
 services:
 
-  ollama:
-    image: ollama/ollama:latest
-    container_name: my_ai_ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    restart: unless-stopped
-
   qdrant:
     image: qdrant/qdrant:latest
     container_name: my_ai_qdrant
@@ -50,7 +41,6 @@ services:
     env_file:
       - .env
     depends_on:
-      - ollama
       - qdrant
       - redis
       - postgres
@@ -61,7 +51,6 @@ services:
     restart: unless-stopped
 
 volumes:
-  ollama_data:
   qdrant_data:
   redis_data:
   postgres_data:

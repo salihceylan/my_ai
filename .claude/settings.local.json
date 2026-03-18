@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(\"C:/Users/fingonancalime/Desktop/my_ai/api/routes/chat.py\":*)"
     ],
     "additionalDirectories": [
       "C:\\Users\\fingonancalime\\Desktop\\my_ai\\nginx"

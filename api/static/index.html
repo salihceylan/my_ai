@@ -386,11 +386,37 @@
 </head>
 <body>
 
+<!-- LOGIN EKRANI -->
+<div id="loginScreen" style="display:none; position:fixed; inset:0; background:#f7f7f8; z-index:1000; align-items:center; justify-content:center;">
+  <div style="background:#fff; border:1px solid #e5e5e5; border-radius:16px; padding:40px 36px; width:360px; box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+    <div style="text-align:center; margin-bottom:28px;">
+      <div style="font-size:36px; margin-bottom:8px;">🤖</div>
+      <h1 style="font-size:22px; font-weight:700; color:#1a1a1a;">My AI</h1>
+      <p style="font-size:13px; color:#8e8ea0; margin-top:4px;">Devam etmek için giriş yapın</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <input id="loginUsername" type="text" placeholder="Kullanıcı adı" style="padding:12px 14px; border:1px solid #d1d5db; border-radius:10px; font-size:14px; outline:none; font-family:inherit;" />
+      <input id="loginPassword" type="password" placeholder="Şifre" style="padding:12px 14px; border:1px solid #d1d5db; border-radius:10px; font-size:14px; outline:none; font-family:inherit;" />
+      <div id="loginError" style="font-size:12px; color:#dc2626; min-height:16px;"></div>
+      <button onclick="doLogin()" style="padding:12px; background:#10a37f; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer;">Giriş Yap</button>
+    </div>
+  </div>
+</div>
+
+<!-- ANA UYGULAMA -->
+<div id="appShell" style="display:flex; width:100%; height:100vh;">
+
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sidebar-top">
     <div class="sidebar-logo">🤖 My AI</div>
     <button class="new-chat-btn" onclick="newChat()" title="Yeni sohbet">✏️</button>
+  </div>
+  <div style="padding:4px 8px 8px; border-bottom:1px solid #e5e5e5; margin-bottom:4px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:6px 8px; background:#f0f0f0; border-radius:8px;">
+      <span id="usernameDisplay" style="font-size:13px; color:#444; font-weight:500;">👤</span>
+      <button onclick="logout()" style="background:none; border:none; font-size:12px; color:#8e8ea0; cursor:pointer; padding:2px 6px; border-radius:4px;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#8e8ea0'">Çıkış</button>
+    </div>
   </div>
 
   <div class="sidebar-section">
@@ -457,6 +483,69 @@
   let sessionId = 'session_' + Date.now();
   let selectedFile = null;
   let isWaiting = false;
+  let authToken = localStorage.getItem('token');
+  let currentUser = localStorage.getItem('username');
+
+  // Sayfa açılınca giriş kontrolü
+  if (!authToken) showLogin();
+  else initApp();
+
+  function showLogin() {
+    document.getElementById('appShell').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+  }
+
+  function showApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appShell').style.display = 'flex';
+    document.getElementById('usernameDisplay').textContent = currentUser || '';
+    loadDocuments();
+  }
+
+  function initApp() {
+    showApp();
+  }
+
+  async function doLogin() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errEl = document.getElementById('loginError');
+    errEl.textContent = '';
+
+    if (!username || !password) { errEl.textContent = 'Kullanıcı adı ve şifre gerekli.'; return; }
+
+    try {
+      const fd = new FormData();
+      fd.append('username', username);
+      fd.append('password', password);
+      const res = await fetch(`${API}/auth/login`, { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) { errEl.textContent = data.detail || 'Giriş başarısız.'; return; }
+      authToken = data.access_token;
+      currentUser = data.username;
+      localStorage.setItem('token', authToken);
+      localStorage.setItem('username', currentUser);
+      showApp();
+    } catch (e) {
+      errEl.textContent = 'Bağlantı hatası: ' + e.message;
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    authToken = null;
+    currentUser = null;
+    showLogin();
+  }
+
+  function authHeaders() {
+    return { 'Authorization': `Bearer ${authToken}` };
+  }
+
+  document.getElementById('loginPassword').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
 
   // Input değişince send butonunu aktif et
   document.getElementById('msgInput').addEventListener('input', function() {
@@ -510,7 +599,7 @@
     try {
       const res = await fetch(`${API}/chat/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ message: msg, session_id: sessionId })
       });
       const data = await res.json();
@@ -610,7 +699,7 @@
     try {
       const res = await fetch(`${API}/documents/upload`, {
         method: 'POST',
-        headers: { 'Authorization': 'Bearer Fingon080808Ancalime' },
+        headers: authHeaders(),
         body: fd
       });
       const data = await res.json();
@@ -650,12 +739,13 @@
     if (!confirm('Bu dökümanı silmek istediğine emin misin?')) return;
     await fetch(`${API}/documents/${id}`, {
       method: 'DELETE',
-      headers: { 'Authorization': 'Bearer Fingon080808Ancalime' }
+      headers: authHeaders()
     });
     loadDocuments();
   }
 
-  loadDocuments();
+  if (authToken) loadDocuments();
 </script>
+</div><!-- appShell -->
 </body>
 </html>

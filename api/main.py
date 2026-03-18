@@ -4,12 +4,16 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 from api.routes import chat, documents, admin
+from api.routes import auth as auth_router
+from api.database import init_db
 import os
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("AI Asistan API başlatılıyor...")
+    init_db()
+    print("Veritabanı tabloları oluşturuldu.")
     yield
     print("AI Asistan API kapatılıyor...")
 
@@ -29,6 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router.router, prefix="/auth", tags=["Auth"])
 app.include_router(chat.router, prefix="/chat", tags=["Chat"])
 app.include_router(documents.router, prefix="/documents", tags=["Documents"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
