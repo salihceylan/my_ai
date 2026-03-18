@@ -604,18 +604,18 @@
       });
       const data = await res.json();
       typingRow.remove();
-      appendMessage('ai', data.response || data.detail, data.sources);
+      const text = data.response || data.detail || '';
+      await appendAiMessage(text, data.sources);
     } catch (e) {
       typingRow.remove();
-      appendMessage('ai', '❌ Bağlantı hatası: ' + e.message);
+      await appendAiMessage('❌ Bağlantı hatası: ' + e.message);
     }
 
     isWaiting = false;
   }
 
-  function appendMessage(role, text, sources) {
+  function appendMessage(role, text) {
     const msgs = document.getElementById('messages');
-
     const row = document.createElement('div');
     row.className = `msg-row ${role}`;
 
@@ -634,23 +634,65 @@
     right.style.flex = '1';
     right.appendChild(textDiv);
 
+    content.appendChild(avatar);
+    content.appendChild(right);
+    row.appendChild(content);
+    msgs.appendChild(row);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  async function appendAiMessage(text, sources) {
+    const msgs = document.getElementById('messages');
+    const row = document.createElement('div');
+    row.className = 'msg-row ai';
+
+    const content = document.createElement('div');
+    content.className = 'msg-content';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'msg-avatar';
+    avatar.textContent = '✦';
+
+    const right = document.createElement('div');
+    right.style.flex = '1';
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'msg-text';
+    right.appendChild(textDiv);
+    content.appendChild(avatar);
+    content.appendChild(right);
+    row.appendChild(content);
+    msgs.appendChild(row);
+
+    // Typewriter efekti
+    const words = text.split('');
+    let i = 0;
+    await new Promise(resolve => {
+      const interval = setInterval(() => {
+        const chunk = words.slice(i, i + 4).join('');
+        textDiv.textContent += chunk;
+        i += 4;
+        msgs.scrollTop = msgs.scrollHeight;
+        if (i >= words.length) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 18);
+    });
+
+    // Kaynakları typewriter bittikten sonra göster
     if (sources && sources.length > 0) {
       const srcDiv = document.createElement('div');
       srcDiv.className = 'msg-sources';
       sources.forEach(s => {
         const badge = document.createElement('span');
         badge.className = 'source-badge';
-        badge.textContent = '📄 ' + s.replace(/\[Kaynak: (.*?) \|.*?\]/,'$1');
+        badge.textContent = '📄 ' + s.replace(/\[Kaynak: (.*?) \|.*?\]/, '$1');
         srcDiv.appendChild(badge);
       });
       right.appendChild(srcDiv);
+      msgs.scrollTop = msgs.scrollHeight;
     }
-
-    content.appendChild(avatar);
-    content.appendChild(right);
-    row.appendChild(content);
-    msgs.appendChild(row);
-    msgs.scrollTop = msgs.scrollHeight;
   }
 
   function appendTyping() {
